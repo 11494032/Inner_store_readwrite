@@ -9,10 +9,14 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        fileRead();
 
 
     }
@@ -43,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         enterCheck = (CheckBox)findViewById(R.id.enterbox);
 
         enterButton = (Button)findViewById(R.id.enterButton);
-        String name = ed_name.toString().trim();
-        String passwd = ed_passwd.toString().trim();
+        String name = ed_name.getText().toString();
+        String passwd = ed_passwd.getText().toString();
 
         if(TextUtils.isEmpty(name) || TextUtils.isEmpty(passwd))
         {
@@ -79,5 +83,40 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "登入成功", Toast.LENGTH_SHORT).show();
     }
 
+    public void fileRead(  )
+    {
+        EditText ed_name;
+        EditText ed_passwd;
+        ed_name = (EditText) findViewById(R.id.input_name);
+        ed_passwd = (EditText) findViewById(R.id.input_password);
+
+        File file = null;
+        FileInputStream fis = null;
+        file = new File("data/data/com.example.moresmart_pc006.inner_store_readwrite/info.txt");
+        if( !file.exists() )
+            return;
+        try {
+
+            fis = new FileInputStream(file);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+             String text =   br.readLine();
+             String[] s =  text.split("##");
+
+            ed_name.setText(s[0]);
+            ed_passwd.setText(s[1]);
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 }
 
